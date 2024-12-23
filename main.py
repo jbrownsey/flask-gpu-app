@@ -8,7 +8,7 @@ import base64
 from io import BytesIO
 
 # Load model
-pipe = StableDiffusionPipeline.from_pretrained("runwayml/stable-diffusion-v1-5", revision="fp16", torch_dtype=torch.float16)
+pipe = StableDiffusionPipeline.from_pretrained("stable-diffusion-v1-5/stable-diffusion-v1-5", revision="fp16", torch_dtype=torch.float16)
 pipe.to("cuda")
 
 # Start flask app and set to ngrok
