@@ -6,4 +6,4 @@ ftfy
 accelerate
 pyngrok
 flask-ngrok
-flask==0.12.2
+flask
