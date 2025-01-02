@@ -468,6 +468,7 @@ def initial():
 
 @app.route("/upload", methods=['POST'])
 def upload():
+    print(request.files)
     if 'file' not in request.files:
         return "No file part", 400
     
