@@ -7,7 +7,7 @@ accelerate
 pyngrok
 flask-ngrok
 flask
-werkzeug.utils
+werkzeug
 numpy
 pandas
 pyairtable
