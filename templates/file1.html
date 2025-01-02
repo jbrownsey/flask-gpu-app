@@ -38,6 +38,18 @@
         </div>
         <input type="submit" value="Extract metrics">
     </form>
+    <script>
+        const fileInput = document.getElementById('file-upload');
+        const fileInfo = document.getElementById('file-name');
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                fileInfo.textContent = ''; // Clear the message once a file is selected
+            } else {
+                fileInfo.textContent = 'No file chosen'; // Revert if no file is selected
+            }
+        });
+    </script>
 
     </body>
     

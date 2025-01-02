@@ -440,7 +440,8 @@ app = Flask(__name__)
 # run_with_ngrok(app)
 port = "5000"
 
-UPLOAD_FOLDER = "./uploads"
+#remove ./?
+UPLOAD_FOLDER = "/uploads"
 ALLOWED_EXTENSIONS = {'pdf'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -468,11 +469,10 @@ def initial():
 
 @app.route("/upload", methods=['POST'])
 def upload():
-    print(request.files)
-    if 'file' not in request.files:
+    if 'file-upload' not in request.files:
         return "No file part", 400
     
-    file = request.files['file']
+    file = request.files['file-upload']
 
     if file.filename=='':
         return "No selected file", 400
