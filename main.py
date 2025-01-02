@@ -63,6 +63,12 @@ import threading
 
 from pyngrok import ngrok, conf
 
+print("Enter your authtoken, which can be copied from https://dashboard.ngrok.com/get-started/your-authtoken")
+conf.get_default().auth_token = getpass.getpass()
+
+print("Enter your openAI API key: ")
+api_key = getpass.getpass()
+
 class evaluate_metric:
     #getting colpali capability
     RAG = RAGMultiModalModel.from_pretrained("vidore/colqwen2-v0.1")
@@ -428,12 +434,6 @@ class evaluate_metric:
             await self.obtain_and_upload(extracted_filename,rep_period,1,company_name)
         else:
             return "metric is not reported in document"
-
-print("Enter your authtoken, which can be copied from https://dashboard.ngrok.com/get-started/your-authtoken")
-conf.get_default().auth_token = getpass.getpass()
-
-print("Enter your openAI API key: ")
-api_key = getpass.getpass()
 
 # Start flask app and set to ngrok
 app = Flask(__name__)
