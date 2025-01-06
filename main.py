@@ -97,9 +97,9 @@ class evaluate_metric:
         if pages!=[]:
             pages = list(set(pages))
             pdf_new = pdfium.PdfDocument.new()
-            pdf = pdfium.PdfDocument(pdf)
-            pdf_new.import_pages(pdf,pages)
-            extracted_filename = filename[:-4]+' extracted.pdf'
+            pdf_old = pdfium.PdfDocument(pdf)
+            pdf_new.import_pages(pdf_old,pages)
+            extracted_filename = pdf[:-4]+' extracted.pdf'
             pdf_new.save(extracted_filename)
             return [True,extracted_filename]
         else:
