@@ -483,8 +483,10 @@ async def upload():
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
         file.save(filepath)
-        html_data = await evaluator.get_metric(filepath,company_name,reporting_period)
-        return render_template("file2.html", html_data=html_data)
+        # html_data = await evaluator.get_metric(filepath,company_name,reporting_period)
+        asyncio.create_task(evaluator.get_metric(filepath,company_name,reporting_period))
+        return "Awaiting metric...", 202
+        # return render_template("file2.html", html_data=html_data)
     
     return "Invalid file type", 400
 
