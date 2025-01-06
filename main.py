@@ -468,7 +468,7 @@ def initial():
 
 
 @app.route("/upload", methods=['POST'])
-async def upload():
+def upload():
     if 'file-upload' not in request.files:
         return "No file part", 400
     
