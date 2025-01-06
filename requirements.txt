@@ -6,7 +6,7 @@ ftfy
 accelerate
 pyngrok
 flask-ngrok
-flask
+flask[async]
 werkzeug
 numpy
 pandas
