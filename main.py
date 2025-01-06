@@ -423,7 +423,7 @@ class evaluate_metric:
         # upload_result = cloudinary.uploader.upload(png_filename,public_id=company_id +' '+rep_period)
         # update_report_table(report_id,upload_result['secure_url'],company_name +' '+rep_period +'.png',float(answer['messages'][0]))
         print("Metric was found on colpali page "+str(j))
-        return float(answer['messages'][0])
+        return str(float(answer['messages'][0]))
 
     #need to remove directories as well
     async def get_metric(self,pdf,company_name,rep_period):
