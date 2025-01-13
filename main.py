@@ -466,10 +466,10 @@ def allowed_file(filename):
 # ... Update inbound traffic via APIs to use the public-facing ngrok URL
 
 # Function to start the Hypercorn server
-def start_hypercorn():
-    config = Config()
-    config.bind = ["127.0.0.1:8000"]  # Address and port to bind the server
-    asyncio.run(serve(app, config))  # Use asyncio to start Hypercorn
+# def start_hypercorn():
+#     config = Config()
+#     config.bind = ["127.0.0.1:8000"]  # Address and port to bind the server
+#     asyncio.run(serve(app, config))  # Use asyncio to start Hypercorn
 
 @app.route('/')
 async def initial():
@@ -505,20 +505,13 @@ async def upload():
 # Start the Flask server in a new thread
 # threading.Thread(target=start_hypercorn).start()
 if __name__ == "__main__":
-    # Start Hypercorn in a separate thread
-    hypercorn_thread = threading.Thread(target=start_hypercorn)
-    hypercorn_thread.start()
+    config = Config()
+    config.bind = ["127.0.0.1:8000"]  # Localhost and port for Hypercorn
+    # Run Hypercorn in the main thread
+    asyncio.run(serve(app, config))
 
     # Set up ngrok to forward to Hypercorn's port
     public_url = ngrok.connect(8000).public_url
     print(f" * ngrok tunnel \"{public_url}\" -> \"http://127.0.0.1:{8000}\"")
     # Update any base URLs to use the public ngrok URL
     app.config["BASE_URL"] = public_url
-
-    try:
-        # Keep the main thread alive
-        hypercorn_thread.join()
-    except KeyboardInterrupt:
-        print("Shutting down...")
-        ngrok.disconnect(public_url)  # Disconnect the ngrok tunnel
-        print("Ngrok tunnel closed.")
