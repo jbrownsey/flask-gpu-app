@@ -480,10 +480,12 @@ async def initial():
 
 @app.route("/upload", methods=['POST'])
 async def upload():
-    if 'file-upload' not in await request.files:
+    files = await request.files
+    uploaded_file = files['file-upload']
+    if 'file-upload' not in files:
         return "No file part", 400
     
-    file = await request.files['file-upload']
+    file = files['file-upload']
 
     if file.filename=='':
         return "No selected file", 400
