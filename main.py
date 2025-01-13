@@ -496,7 +496,7 @@ async def upload():
         reporting_period = form["reporting_year"]
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
-        file.save(filepath)
+        await file.save(filepath)
         # html_data = await evaluator.get_metric(filepath,company_name,reporting_period)
         html_data = await evaluator.get_metric(filepath,company_name,reporting_period)
         # return "Awaiting metric...", 202
