@@ -8,6 +8,7 @@ pyngrok
 flask-ngrok
 flask[async]
 quart
+hypercorn
 werkzeug
 numpy
 pandas

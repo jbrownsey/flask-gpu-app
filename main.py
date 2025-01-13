@@ -1,5 +1,7 @@
 # from flask import Flask, render_template, request
 from quart import Quart, render_template, request
+from hypercorn.config import Config
+from hypercorn.asyncio import serve
 from werkzeug.utils import secure_filename
 
 from byaldi import RAGMultiModalModel
@@ -463,10 +465,15 @@ app.config["BASE_URL"] = public_url
 
 # ... Update inbound traffic via APIs to use the public-facing ngrok URL
 
+# Function to start the Hypercorn server
+def start_hypercorn():
+    config = Config()
+    config.bind = ["127.0.0.1:5000"]  # Address and port to bind the server
+    asyncio.run(serve(app, config))  # Use asyncio to start Hypercorn
+
 @app.route('/')
 async def initial():
     return render_template("file1.html")
-
 
 @app.route("/upload", methods=['POST'])
 async def upload():
@@ -496,4 +503,4 @@ async def upload():
 #     app.run()
 
 # Start the Flask server in a new thread
-threading.Thread(target=app.run, kwargs={"use_reloader": False}).start()
+threading.Thread(target=start_hypercorn, kwargs={"use_reloader": False}).start()
