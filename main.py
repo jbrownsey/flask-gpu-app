@@ -473,7 +473,7 @@ def allowed_file(filename):
 
 @app.route('/')
 async def initial():
-    return render_template("file1.html")
+    return await render_template("file1.html")
 
 @app.route("/upload", methods=['POST'])
 async def upload():
@@ -494,7 +494,7 @@ async def upload():
         # html_data = await evaluator.get_metric(filepath,company_name,reporting_period)
         html_data = await evaluator.get_metric(filepath,company_name,reporting_period)
         # return "Awaiting metric...", 202
-        return render_template("file2.html", html_data=html_data)
+        return await render_template("file2.html", html_data=html_data)
     
     return "Invalid file type", 400
 
