@@ -503,4 +503,4 @@ async def upload():
 #     app.run()
 
 # Start the Flask server in a new thread
-threading.Thread(target=start_hypercorn, kwargs={"use_reloader": False}).start()
+threading.Thread(target=start_hypercorn).start()
