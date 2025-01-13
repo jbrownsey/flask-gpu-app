@@ -441,7 +441,7 @@ class evaluate_metric:
 # Start flask app and set to ngrok
 app = Quart(__name__)
 # run_with_ngrok(app)
-port = "5000"
+# port = "5000"
 
 #remove ./?
 UPLOAD_FOLDER = "/uploads"
@@ -457,18 +457,18 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Open a ngrok tunnel to the HTTP server
-public_url = ngrok.connect(port).public_url
-print(f" * ngrok tunnel \"{public_url}\" -> \"http://127.0.0.1:{port}\"")
+# public_url = ngrok.connect(port).public_url
+# print(f" * ngrok tunnel \"{public_url}\" -> \"http://127.0.0.1:{port}\"")
 
-# Update any base URLs to use the public ngrok URL
-app.config["BASE_URL"] = public_url
+# # Update any base URLs to use the public ngrok URL
+# app.config["BASE_URL"] = public_url
 
 # ... Update inbound traffic via APIs to use the public-facing ngrok URL
 
 # Function to start the Hypercorn server
 def start_hypercorn():
     config = Config()
-    config.bind = ["127.0.0.1:5000"]  # Address and port to bind the server
+    config.bind = ["127.0.0.1:8000"]  # Address and port to bind the server
     asyncio.run(serve(app, config))  # Use asyncio to start Hypercorn
 
 @app.route('/')
@@ -503,4 +503,22 @@ async def upload():
 #     app.run()
 
 # Start the Flask server in a new thread
-threading.Thread(target=start_hypercorn).start()
+# threading.Thread(target=start_hypercorn).start()
+if __name__ == "__main__":
+    # Start Hypercorn in a separate thread
+    hypercorn_thread = threading.Thread(target=start_hypercorn)
+    hypercorn_thread.start()
+
+    # Set up ngrok to forward to Hypercorn's port
+    public_url = ngrok.connect(8000).public_url
+    print(f" * ngrok tunnel \"{public_url}\" -> \"http://127.0.0.1:{8000}\"")
+    # Update any base URLs to use the public ngrok URL
+    app.config["BASE_URL"] = public_url
+
+    try:
+        # Keep the main thread alive
+        hypercorn_thread.join()
+    except KeyboardInterrupt:
+        print("Shutting down...")
+        ngrok.disconnect(public_url)  # Disconnect the ngrok tunnel
+        print("Ngrok tunnel closed.")
