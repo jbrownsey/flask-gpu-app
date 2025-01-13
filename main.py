@@ -434,7 +434,7 @@ class evaluate_metric:
         metric_appears = self.extract_pdf(pdf)
         if metric_appears[0]==True:
             extracted_filename = metric_appears[1]
-            await self.obtain_and_upload(extracted_filename,rep_period,1,company_name)
+            return await self.obtain_and_upload(extracted_filename,rep_period,1,company_name)
         else:
             return "metric is not reported in document"
 
