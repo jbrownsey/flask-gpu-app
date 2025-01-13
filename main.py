@@ -437,6 +437,8 @@ class evaluate_metric:
 
 # Start flask app and set to ngrok
 app = Flask(__name__)
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
 # run_with_ngrok(app)
 port = "5000"
 
@@ -484,7 +486,7 @@ def upload():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
         file.save(filepath)
         # html_data = await evaluator.get_metric(filepath,company_name,reporting_period)
-        html_data = asyncio.run(evaluator.get_metric(filepath,company_name,reporting_period))
+        html_data = loop.run_until_complete(evaluator.get_metric(filepath,company_name,reporting_period))
         # return "Awaiting metric...", 202
         return render_template("file2.html", html_data=html_data)
     
