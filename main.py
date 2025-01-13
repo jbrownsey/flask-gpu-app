@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request
+# from flask import Flask, render_template, request
+from quart import Quart, render_template, request
 from werkzeug.utils import secure_filename
 
 from byaldi import RAGMultiModalModel
@@ -436,9 +437,7 @@ class evaluate_metric:
             return "metric is not reported in document"
 
 # Start flask app and set to ngrok
-app = Flask(__name__)
-loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
+app = Quart(__name__)
 # run_with_ngrok(app)
 port = "5000"
 
@@ -465,12 +464,12 @@ app.config["BASE_URL"] = public_url
 # ... Update inbound traffic via APIs to use the public-facing ngrok URL
 
 @app.route('/')
-def initial():
+async def initial():
     return render_template("file1.html")
 
 
 @app.route("/upload", methods=['POST'])
-def upload():
+async def upload():
     if 'file-upload' not in request.files:
         return "No file part", 400
     
@@ -486,7 +485,7 @@ def upload():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
         file.save(filepath)
         # html_data = await evaluator.get_metric(filepath,company_name,reporting_period)
-        html_data = loop.run_until_complete(evaluator.get_metric(filepath,company_name,reporting_period))
+        html_data = await evaluator.get_metric(filepath,company_name,reporting_period))
         # return "Awaiting metric...", 202
         return render_template("file2.html", html_data=html_data)
     
