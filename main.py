@@ -491,8 +491,9 @@ async def upload():
         return "No selected file", 400
     
     if file and allowed_file(file.filename):
-        company_name = await request.form["company_name"]
-        reporting_period = await request.form["reporting_year"]
+        form = await request.form
+        company_name = form["company_name"]
+        reporting_period = form["reporting_year"]
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
         file.save(filepath)
