@@ -477,17 +477,17 @@ async def initial():
 
 @app.route("/upload", methods=['POST'])
 async def upload():
-    if 'file-upload' not in request.files:
+    if 'file-upload' not in await request.files:
         return "No file part", 400
     
-    file = request.files['file-upload']
+    file = await request.files['file-upload']
 
     if file.filename=='':
         return "No selected file", 400
     
     if file and allowed_file(file.filename):
-        company_name = request.form["company_name"]
-        reporting_period = request.form["reporting_year"]
+        company_name = await request.form["company_name"]
+        reporting_period = await request.form["reporting_year"]
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
         file.save(filepath)
