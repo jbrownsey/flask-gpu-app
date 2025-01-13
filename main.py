@@ -505,13 +505,12 @@ async def upload():
 # Start the Flask server in a new thread
 # threading.Thread(target=start_hypercorn).start()
 if __name__ == "__main__":
-    config = Config()
-    config.bind = ["127.0.0.1:8000"]  # Localhost and port for Hypercorn
-    # Run Hypercorn in the main thread
-    asyncio.run(serve(app, config))
-
     # Set up ngrok to forward to Hypercorn's port
     public_url = ngrok.connect(8000).public_url
     print(f" * ngrok tunnel \"{public_url}\" -> \"http://127.0.0.1:{8000}\"")
     # Update any base URLs to use the public ngrok URL
     app.config["BASE_URL"] = public_url
+    config = Config()
+    config.bind = ["127.0.0.1:8000"]  # Localhost and port for Hypercorn
+    # Run Hypercorn in the main thread
+    asyncio.run(serve(app, config))
