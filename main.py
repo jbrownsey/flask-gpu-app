@@ -448,7 +448,7 @@ UPLOAD_FOLDER = "/uploads"
 ALLOWED_EXTENSIONS = {'pdf'}
 
 # Set the maximum allowed request size (in bytes)
-app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 MB, adjust as needed
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 10 MB, adjust as needed
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
