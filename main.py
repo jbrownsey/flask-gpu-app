@@ -426,7 +426,7 @@ class evaluate_metric:
         # upload_result = cloudinary.uploader.upload(png_filename,public_id=company_id +' '+rep_period)
         # update_report_table(report_id,upload_result['secure_url'],company_name +' '+rep_period +'.png',float(answer['messages'][0]))
         print("Metric was found on colpali page "+str(j))
-        return answer['messages'][0]
+        return [answer['messages'][0],png_filename]
 
     #need to remove directories as well
     async def get_metric(self,pdf,company_name,rep_period):
@@ -498,9 +498,9 @@ async def upload():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
         await file.save(filepath)
         # html_data = await evaluator.get_metric(filepath,company_name,reporting_period)
-        html_data = await evaluator.get_metric(filepath,company_name,reporting_period)
+        [html_data,png_name] = await evaluator.get_metric(filepath,company_name,reporting_period)
         # return "Awaiting metric...", 202
-        return await render_template("file2.html", html_data=html_data)
+        return await render_template("file2.html", html_data=html_data,png_file_name =png_name)
     
     return "Invalid file type", 400
 

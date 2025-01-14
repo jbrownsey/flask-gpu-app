@@ -6,6 +6,34 @@
  </head>
 
  <body>
-  {{html_data}}
+    <div>
+        {{html_data}}
+    </div>
+    <div>
+        class="container" 
+         style="text-align: right; margin-top: 5em;">
+        <img src={{png_file_name}}
+            onclick="enlargeImg()"
+            id="img1" />
+        <br><br><br>
+
+        <button onclick="resetImg()">Reset</button>
+    </div>
+
+    <!-- script to set display property -->
+    <script>
+        img = document.getElementById("img1");
+      
+        function enlargeImg() {
+            img.style.transform = "scale(1.5)";
+            img.style.transition = "transform 0.25s ease";
+        }
+      
+        // Function to reset image size
+        function resetImg() {
+            img.style.transform = "scale(1)";
+            img.style.transition = "transform 0.25s ease";
+        }
+    </script>
  </body>
 </html>
