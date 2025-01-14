@@ -1,5 +1,5 @@
 # from flask import Flask, render_template, request
-from quart import Quart, render_template, request
+from quart import Quart, render_template, request, send_file
 from hypercorn.config import Config
 from hypercorn.asyncio import serve
 from werkzeug.utils import secure_filename
@@ -417,16 +417,16 @@ class evaluate_metric:
                     answer = value
                 else:
                     pass
-        return answer
+        return [answer,img_base64]
 
     async def obtain_and_upload(self,extracted_filename,rep_period,j,company_name):
         doc = pymupdf.open(extracted_filename)
-        [page_png,png_filename] = self.get_page_as_png(extracted_filename,rep_period,j)
-        answer = await self.RAG_page(page_png,rep_period)
+        page_png = self.get_page_as_png(extracted_filename,rep_period,j)
+        [answer,img_base64] = await self.RAG_page(page_png,rep_period)
         # upload_result = cloudinary.uploader.upload(png_filename,public_id=company_id +' '+rep_period)
         # update_report_table(report_id,upload_result['secure_url'],company_name +' '+rep_period +'.png',float(answer['messages'][0]))
         print("Metric was found on colpali page "+str(j))
-        return [answer['messages'][0],png_filename]
+        return [answer['messages'][0],img_base64]
 
     #need to remove directories as well
     async def get_metric(self,pdf,company_name,rep_period):
@@ -444,7 +444,7 @@ app = Quart(__name__)
 # port = "5000"
 
 #remove ./?
-UPLOAD_FOLDER = "/uploads"
+UPLOAD_FOLDER = "/uploads/"
 ALLOWED_EXTENSIONS = {'pdf'}
 
 # Set the maximum allowed request size (in bytes)
@@ -478,8 +478,8 @@ def allowed_file(filename):
 async def initial():
     return await render_template("file1.html")
 
-@app.route("/upload", methods=['POST'])
-async def upload():
+@app.route("/show_result/", methods=['POST'])
+async def show_result():
     files = await request.files
     uploaded_file = files['file-upload']
     if 'file-upload' not in files:
@@ -498,9 +498,9 @@ async def upload():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
         await file.save(filepath)
         # html_data = await evaluator.get_metric(filepath,company_name,reporting_period)
-        [html_data,png_name] = await evaluator.get_metric(filepath,company_name,reporting_period)
+        [html_data,img_base64] = await evaluator.get_metric(filepath,company_name,reporting_period)
         # return "Awaiting metric...", 202
-        return await render_template("file2.html", html_data=html_data,png_file_name =png_name)
+        return await render_template("file2.html", html_data=html_data,img_base64=img_base64)
     
     return "Invalid file type", 400
 
