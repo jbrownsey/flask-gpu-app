@@ -518,5 +518,6 @@ if __name__ == "__main__":
     app.config["BASE_URL"] = public_url
     config = Config()
     config.bind = ["127.0.0.1:8000"]  # Localhost and port for Hypercorn
+    config.timeout = 600
     # Run Hypercorn in the main thread
     asyncio.run(serve(app, config))
