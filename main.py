@@ -478,7 +478,7 @@ def allowed_file(filename):
 async def initial():
     return await render_template("file1.html")
 
-@app.route("/show_result/", methods=['POST'])
+@app.route("show_result", methods=['POST'])
 async def show_result():
     files = await request.files
     uploaded_file = files['file-upload']
