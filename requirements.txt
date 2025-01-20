@@ -25,4 +25,4 @@ langchain_community
 langgraph
 shapely
 cloudinary
-faiss-gpu
+faiss-gpu-cu12
