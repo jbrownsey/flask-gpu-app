@@ -478,8 +478,8 @@ def allowed_file(filename):
 #     config.bind = ["127.0.0.1:8000"]  # Address and port to bind the server
 #     asyncio.run(serve(app, config))  # Use asyncio to start Hypercorn
 
-@app.route('/index/')
-async def index():
+@app.route('/')
+async def initial():
     return await render_template("file1.html")
 
 @app.route("/show_result/", methods=['POST'])
