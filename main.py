@@ -422,7 +422,7 @@ class evaluate_metric:
     async def obtain_and_upload(self,extracted_filename,rep_period,j,company_name):
         doc = pymupdf.open(extracted_filename)
         page_png = self.get_page_as_png(extracted_filename,rep_period,j)
-        [answer,img_base64] = await self.RAG_page(page_png,rep_period)
+        [answer,img_base64] = await self.RAG_page(page_png[0],rep_period)
         # upload_result = cloudinary.uploader.upload(png_filename,public_id=company_id +' '+rep_period)
         # update_report_table(report_id,upload_result['secure_url'],company_name +' '+rep_period +'.png',float(answer['messages'][0]))
         print("Metric was found on colpali page "+str(j))
