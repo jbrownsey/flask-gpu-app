@@ -11,9 +11,9 @@
     <div class="container">
         <div>
         <img src="data:image/png;base64,{{img_base64}}"
-            onclick="enlargeImg()"
+            onclick="enlargeContainer()"
             id="img1" />
-        <button onclick="resetImg()">Reset</button>
+        <button onclick="resetContainer()">Reset</button>
         </div>
         <div class="text">
             <h1> Water withdrawn (m3): {{html_data}}</h1>
@@ -28,17 +28,17 @@
     </script>
     <!-- script to set display property -->
     <script>
-        img = document.getElementById("img1");
+        container = document.querySelector(".container");
       
         function enlargeImg() {
-            img.style.transform = "scale(3)";
-            img.style.transition = "transform 0.25s ease";
+            container.style.transform = "scale(3) translateX(50px)";
+            container.style.transition = "transform 0.25s ease";
         }
       
         // Function to reset image size
-        function resetImg() {
-            img.style.transform = "scale(1)";
-            img.style.transition = "transform 0.25s ease";
+        function resetContainer() {
+            container.style.transform = "scale(1) translateX(-50px)";
+            container.style.transition = "transform 0.25s ease";
         }
     </script>
  </body>
