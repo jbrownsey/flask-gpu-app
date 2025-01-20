@@ -3,21 +3,20 @@
  <head>
   <!-- <meta charset="multipart/form-data"> -->
   <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}" />
  </head>
 
  <body>
-    <div>
-        {{html_data}}
-    </div>
-    <div>
-        class="container" 
-         style="text-align: right; margin-top: 5em;">
+    <div class="container" >
         <img src="data:image/png;base64,{{img_base64}}"
             onclick="enlargeImg()"
             id="img1" />
         <br><br><br>
 
         <button onclick="resetImg()">Reset</button>
+    </div>
+    <div class="text">
+        <h1>{{html_data}}</h1>
     </div>
 
     <!-- script to set display property -->
