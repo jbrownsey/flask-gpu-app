@@ -479,7 +479,7 @@ def allowed_file(filename):
 #     asyncio.run(serve(app, config))  # Use asyncio to start Hypercorn
 
 @app.route('/index/')
-async def initial():
+async def index():
     return await render_template("file1.html")
 
 @app.route("/show_result/", methods=['POST'])
