@@ -109,12 +109,16 @@ class evaluate_metric:
             return [False]
 
     def get_page_as_png(self,extracted_file,year,j):
-        evaluate_metric.RAG.index(input_path=extracted_file,
-                index_name="multimodal_rag",
+        text_query = "What is the total water withdrawn by the company in "+year+"?"
+        try:
+            RAG = RAGMultiModalModel.from_index(extracted_file[:-4])
+            results = RAG.search(text_query,k=3)
+        except:
+            evaluate_metric.RAG.index(input_path=extracted_file,
+                index_name=extracted_file[:-4],
                 store_collection_with_index=False,
                 overwrite=True,)
-        text_query = "What is the total water withdrawn by the company in "+year+"?"
-        results = evaluate_metric.RAG.search(text_query,k=3)
+            results = evaluate_metric.RAG.search(text_query,k=3)
         pages = convert_from_path(extracted_file)
         png_file = extracted_file[:-4]+' page.png'
         pages[results[j-1]['page_num']-1].save(png_file, 'PNG')
@@ -474,7 +478,7 @@ def allowed_file(filename):
 #     config.bind = ["127.0.0.1:8000"]  # Address and port to bind the server
 #     asyncio.run(serve(app, config))  # Use asyncio to start Hypercorn
 
-@app.route('/')
+@app.route('/index/')
 async def initial():
     return await render_template("file1.html")
 
