@@ -397,8 +397,8 @@ class evaluate_metric:
         inputs = {
             "messages": [
                 ("user", f"""
-                        "Report the total water withdrawn by the company in {year}, if it is disclosed in the provided context. 
-                        In your answer, print only the number (in metres cubed), and do not include units."""
+                        "Report the total water withdrawn and the total water consumed by the company in {year}, in json format,
+                        if it is disclosed in the provided context. Give the numeric values in metres cubed and do not include units."""
                 ),
             ]
         }
