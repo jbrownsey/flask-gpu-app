@@ -9,7 +9,7 @@
  <body>
     <h1>Metrics</h1>
     <div class="container">
-        <div>
+        <div class = "source">
         <img src="data:image/png;base64,{{img_base64}}"
             onclick="enlargeContainer()"
             id="img1" />
@@ -28,17 +28,17 @@
     </script>
     <!-- script to set display property -->
     <script>
-        container = document.querySelector(".container");
+        source = document.querySelector(".source");
       
-        function enlargeImg() {
-            container.style.transform = "scale(3) translateX(50px)";
-            container.style.transition = "transform 0.25s ease";
+        function enlargeSource() {
+            source.style.transform = "scale(3) translateX(50px)";
+            source.style.transition = "transform 0.25s ease";
         }
       
         // Function to reset image size
-        function resetContainer() {
-            container.style.transform = "scale(1) translateX(-50px)";
-            container.style.transition = "transform 0.25s ease";
+        function resetSource() {
+            source.style.transform = "scale(1) translateX(-50px)";
+            source.style.transition = "transform 0.25s ease";
         }
     </script>
  </body>
