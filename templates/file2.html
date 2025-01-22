@@ -15,8 +15,11 @@
             id="img1" />
         <button onclick="resetSource()">Reset</button>
         </div>
-        <div class="text">
-            <h1> Water withdrawn (m3): {{html_data}}</h1>
+        <div class="form">
+            <form>
+                <label for="water_withdrawn">Water Withdrawn:</label>
+                <input type="text" id="water_withdrawn" name="water_withdrawn" value={{html_data}}>
+            </form>    
         </div>
     </div>
     <button id="newButton" class="float-left submit-button" >New Document</button>
@@ -37,7 +40,7 @@
       
         // Function to reset image size
         function resetSource() {
-            source.style.transform = "scale(1) translateX(-150px)";
+            source.style.transform = "translateX(-150px) scale(1)";
             source.style.transition = "transform 0.25s ease";
         }
     </script>
