@@ -5,55 +5,111 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}" />
         <link rel="icon" type="image/x-icon" href="{{ url_for('static',filename='icon.png') }}" />
         <title>Metric Extraction</title>
+        <style>
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            .form-group {
+                margin-bottom: 20px;
+            }
+            label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+            input[type="text"], select {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+            .file-input-container {
+                border: 2px dashed #ddd;
+                padding: 20px;
+                text-align: center;
+                margin: 20px 0;
+            }
+            .submit-btn {
+                background-color: #4CAF50;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            .submit-btn:hover {
+                background-color: #45a049;
+            }
+        </style>
     </head>
 
     <body>
+        <div class="container">
+            <h1>Enter Data</h1>
 
-    <h1> Enter Data</h1>
-
-    <form action="{{ url_for('show_result') }}" method="post" enctype = "multipart/form-data">
-        </div id="company-name-div">
-            Company name: <input type="text" name="company_name" list="companies">
-                <datalist id="companies">
-                    <option value="Boston">
-                    <option value="Cambridge">
-                </datalist>
-        </div>
-        <div id="year-radio-div">
-            <input type="radio" id="fy2022" name="reporting_year" value="2022">
-            <label for="fy2022">2022</label><br>
-            <input type="radio" id="fy2023" name="reporting_year" value="2023">
-            <label for="fy2023">2023</label><br>
-        </div>
-        <div id="file-input-div">
-            <div class="file-input-container">
-                <div id="drop-area">
-                    <i class="fas fa-file-upload"></i>
-                    <p>Drag and drop a PDF here or click to upload</p>
-                    <input id="file-upload" name="file-upload" type="file" accept=".pdf" />
-                    <p class="error-message" id="error-message"></p>
+            <form action="{{ url_for('process') }}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="company_name">Company Name:</label>
+                    <input type="text" id="company_name" name="company_name" required>
                 </div>
-                <div id="file-info">
-                    <span id="file-name">No file chosen</span>
-                    <!-- <span id="remove-file" style="display: none;">&times;</span> -->
+
+                <div class="form-group">
+                    <label for="reporting_year">Reporting Year:</label>
+                    <select id="reporting_year" name="reporting_year" required>
+                        <option value="">Select Year</option>
+                        <option value="2022">2022</option>
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                    </select>
                 </div>
-            </div>
+
+                <div class="form-group">
+                    <label for="metric_name">Metric to Extract:</label>
+                    <select id="metric_name" name="metric_name" required>
+                        <option value="water withdrawal">Water Withdrawal</option>
+                        <option value="energy consumption">Energy Consumption</option>
+                        <option value="greenhouse gas emissions">Greenhouse Gas Emissions</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Upload PDF Report:</label>
+                    <div class="file-input-container">
+                        <input type="file" id="file" name="file" accept=".pdf" required>
+                        <p>Drag and drop your PDF here or click to browse</p>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Extract Metric</button>
+            </form>
         </div>
-        <input type="submit" value="Extract metrics">
-    </form>
-    <script>
-        const fileInput = document.getElementById('file-upload');
-        const fileInfo = document.getElementById('file-name');
 
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files.length > 0) {
-                fileInfo.textContent = ''; // Clear the message once a file is selected
-            } else {
-                fileInfo.textContent = 'No file chosen'; // Revert if no file is selected
-            }
-        });
-    </script>
+        <script>
+            const fileInput = document.getElementById('file');
+            const fileContainer = document.querySelector('.file-input-container');
 
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    fileContainer.style.borderColor = '#4CAF50';
+                }
+            });
+
+            fileContainer.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileContainer.style.borderColor = '#4CAF50';
+            });
+
+            fileContainer.addEventListener('dragleave', () => {
+                fileContainer.style.borderColor = '#ddd';
+            });
+
+            fileContainer.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileInput.files = e.dataTransfer.files;
+                fileContainer.style.borderColor = '#4CAF50';
+            });
+        </script>
     </body>
-    
 </html>
