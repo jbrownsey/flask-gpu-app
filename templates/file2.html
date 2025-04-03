@@ -95,10 +95,10 @@
                     
                     <div class="metric-form">
                         <label for="metric_value">Extracted Value:</label>
-                        <input type="text" id="metric_value" value="{{ metric_value }}" readonly>
+                        <input type="text" id="metric_value" value="{{ html_data }}" readonly>
                     </div>
                     
-                    <a href="{{ url_for('index') }}" class="new-document-btn">Process New Document</a>
+                    <a href="{{ url_for('initial') }}" class="new-document-btn">Process New Document</a>
                 </div>
             </div>
         </div>
