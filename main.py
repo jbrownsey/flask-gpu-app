@@ -72,6 +72,11 @@ conf.get_default().auth_token = getpass.getpass()
 print("Enter your openAI API key: ")
 api_key = getpass.getpass()
 
+print("Enter your airtable API key: ")
+airtable_api_key = getpass.getpass()
+
+api = Api(airtable_api_key)
+
 class evaluate_metric:
     #getting colpali capability
     RAG = RAGMultiModalModel.from_pretrained("vidore/colqwen2-v0.1")
@@ -452,6 +457,69 @@ app = Quart(__name__)
 # run_with_ngrok(app)
 # port = "5000"
 
+# connect to Reports Airtable
+
+reports_table = api.table('appoixnEthALBAALd', 'tbl0JAnFkPP4vSY0R')
+
+reports_dict = reports_table.all()
+
+#convert to pandas dataframe
+flat_dict = []
+reports_id = []
+
+
+for i in range(len(reports_dict)):
+
+    reports_id.append(reports_dict[i]["id"])
+    flat_dict.append(reports_dict[i]["fields"])
+
+reports_df = pd.DataFrame.from_dict(flat_dict, orient = "columns")
+reports_df.insert(0, "id", reports_id)
+
+period = list(reports_df['Reporting Period'].values)
+sus_reports = list(reports_df["Sustainability Report"].values)
+comp_d = list(reports_df['Company'].values)
+comp_names_d = list(reports_df['Name (autom. filled)'].values)
+sector_d = list(reports_df['Sector (from Company)'].values)
+ind = list(reports_df['Industry (from Company)'].values)
+ids_d = list(reports_df['id'].values)
+
+filenames = []
+urls = []
+companies = []
+company_names = []
+sectors = []
+industries = []
+rep_period = []
+ids = []
+
+for i in range(len(sus_reports)):
+    try:
+        x = sus_reports[i][0]["filename"]
+
+        if ".pdf" in sus_reports[i][0]["filename"]:
+            
+            filenames.append(sus_reports[i][0]["filename"])
+            urls.append(sus_reports[i][0]["url"])
+            company_names.append(comp_names_d[i][0])
+            companies.append(comp_d[i][0])
+            ids.append(ids_d[i])
+            sectors.append(sector_d[i][0])
+            industries.append(ind[i][0])
+            rep_period.append(period[i])
+
+    except:
+        pass
+
+sus_reports_df = pd.DataFrame(zip(ids, companies, company_names, industries, sectors, rep_period, filenames, urls), columns = ["id", "Company", "Company name", "Industry", "Sector", "Reporting Period", "Filename", "URL"])
+
+sectors_l = list(sus_reports_df['Sector'].values)
+
+sector_industry_map = {}
+
+for i in range(len(sectors_l)):
+    sector_industry_map[sectors_l[i]] = list(set(sus_reports_df.loc[sus_reports_df['Sector'] == sectors_l[i]]['Industry'].values))
+
 #remove ./?
 UPLOAD_FOLDER = "/uploads/"
 ALLOWED_EXTENSIONS = {'pdf'}
@@ -485,7 +553,7 @@ def allowed_file(filename):
 
 @app.route('/')
 async def initial():
-    return await render_template("file1.html")
+    return await render_template("file1.html", sector_industry_map=json.dumps(sector_industry_map))
 
 @app.route("/show_result/", methods=['POST'])
 async def show_result():

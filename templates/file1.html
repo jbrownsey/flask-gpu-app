@@ -50,6 +50,15 @@
             <h1>Enter Data</h1>
 
             <form action="{{ url_for('show_result') }}" method="post" enctype="multipart/form-data">
+
+                <div class="form-group">
+                    <label for="sector">Sector:</label>
+                    <select id="sector" name="sector"></select>
+                    
+                    <label for="industry">Industry:</label>
+                    <select id="industry" name="industry"></select>
+                </div>
+                
                 <div class="form-group">
                     <label for="company_name">Company Name:</label>
                     <input type="text" id="company_name" name="company_name" required>
@@ -89,6 +98,34 @@
         <script>
             const fileInput = document.getElementById('file-upload');
             const fileContainer = document.querySelector('.file-input-container');
+            const sectorIndustryMap = {{ sector_industry_map|safe}};
+            const sectorSelect = document.getElementById('sector');
+            const industrySelect = document.getElementById('industry');
+
+            // Populate sectors
+            Object.keys(sectorIndustryMap).forEach(sector => {
+            const option = document.createElement('option');
+            option.value = sector;
+            option.text = sector;
+            sectorSelect.add(option);
+            });
+
+            // Populate industries on sector change
+            sectorSelect.addEventListener('change', function() {
+            // Clear previous industries
+            industrySelect.innerHTML = '';
+            // Add new industries
+            sectorIndustryMap[this.value].forEach(industry => {
+                const option = document.createElement('option');
+                option.value = industry;
+                option.text = industry;
+                industrySelect.add(option);
+            });
+            });
+
+            // Trigger once on load to set initial industries
+            sectorSelect.dispatchEvent(new Event('change'));
+
 
             fileInput.addEventListener('change', (e) => {
                 if (e.target.files.length > 0) {
