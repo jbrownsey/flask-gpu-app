@@ -560,11 +560,12 @@ async def collected_pdfs():
     filtered_df = filtered_df[filtered_df["Reporting Period"]!="2021"].reset_index(drop = True)
     urls = list(filtered_df["URL"].values)
     ids = list(filtered_df["id"].values)
+    rep_years = list(filtered_df["Reporting Period"].values)
     downloaded_files = []
     for i in range(len(urls)):
         try:
             url = urls[i]
-            filename = str(ids[i])+'.pdf'
+            filename = str(ids[i])+'_'+str(rep_years[i])+'.pdf'
             filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
             urllib.request.urlretrieve(url,filepath)
             downloaded_files.append(filepath)
@@ -585,9 +586,10 @@ async def show_result():
     for file in files:
         filepath = os.path.join(app.config['UPLOAD_FOLDER'],file)
         #look up id to get company name and reporting period
-        id = file.split('.')[0]
-        print(id)
-        company_name = sus_reports_df.loc[sus_reports_df['id'] == id]['Company'].values[0]
+        id_year = file.split('.')[0]
+        print(id_year)
+        id = id_year.split('_')[0]
+        company_name = sus_reports_df.loc[sus_reports_df['id'] == id]['Company name'].values[0]
         reporting_period = sus_reports_df.loc[sus_reports_df['id'] == id]['Reporting Period'].values[0]
         #[html_data,img_base64] = await evaluator.get_metric(filepath,company_name,reporting_period)
         result = await evaluator.get_metric(filepath,company_name,reporting_period)
