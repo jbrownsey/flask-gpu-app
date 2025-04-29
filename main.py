@@ -586,6 +586,7 @@ async def show_result():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'],file)
         #look up id to get company name and reporting period
         id = file.split('.')[0]
+        print(id)
         company_name = sus_reports_df.loc[sus_reports_df['id'] == id]['Company'].values[0]
         reporting_period = sus_reports_df.loc[sus_reports_df['id'] == id]['Reporting Period'].values[0]
         #[html_data,img_base64] = await evaluator.get_metric(filepath,company_name,reporting_period)
