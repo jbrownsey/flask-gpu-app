@@ -430,6 +430,8 @@ class evaluate_metric:
                     answer = value
                 else:
                     pass
+        if answer == []:
+            answer = "skip"
         return [answer,img_base64]
 
     async def obtain_and_upload(self,extracted_filename,rep_period,j,company_name):
@@ -439,7 +441,8 @@ class evaluate_metric:
         # upload_result = cloudinary.uploader.upload(png_filename,public_id=company_id +' '+rep_period)
         # update_report_table(report_id,upload_result['secure_url'],company_name +' '+rep_period +'.png',float(answer['messages'][0]))
         print("Metric was found on colpali page "+str(j))
-        return [answer['messages'][0],img_base64]
+        #answer['messages'][0]
+        return [answer,img_base64]
         #return [answer,img_base64]
 
     #need to remove directories as well
