@@ -588,11 +588,13 @@ async def show_result():
         id = file.split('.')[0]
         company_name = sus_reports_df.loc[sus_reports_df['id'] == id]['Company'].values[0]
         reporting_period = sus_reports_df.loc[sus_reports_df['id'] == id]['Reporting Period'].values[0]
-        [html_data,img_base64] = await evaluator.get_metric(filepath,company_name,reporting_period)
-        images.append(img_base64)
-        results.append(html_data)
-        companies.append(company_name)
-        reporting_periods.append(reporting_period)
+        #[html_data,img_base64] = await evaluator.get_metric(filepath,company_name,reporting_period)
+        result = await evaluator.get_metric(filepath,company_name,reporting_period)
+        print(result)
+        # images.append(img_base64)
+        # results.append(html_data)
+        # companies.append(company_name)
+        # reporting_periods.append(reporting_period)
     return await render_template("file2.html", results=results,images=images,companies=companies,reporting_periods=reporting_periods)
 
 # if __name__ == '__main__':
