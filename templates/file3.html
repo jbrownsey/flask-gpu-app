@@ -47,24 +47,20 @@
 
     <body>
         <div class="container">
-            <h1>Metric Extraction</h1>
-
-            <form action="{{ url_for('show_result') }}" method="post" enctype="multipart/form-data">
+            <h1>Choose a Sector and Industry</h1>
+            <form id="collectPdfsForm" action="{{ url_for('collected_pdfs') }}" method="post" enctype="multipart/form-data">
                 <div class="form-group">
-                    <label for="metric_name">Metric to Extract:</label>
-                    <select id="metric_name" name="metric_name" required>
-                        <option value="water withdrawal">Water Withdrawal</option>
-                        <option value="energy consumption">Energy Consumption</option>
-                        <option value="greenhouse gas emissions">Greenhouse Gas Emissions</option>
-                    </select>
+                    <label for="sector">Sector:</label>
+                    <select id="sector" name="sector"></select>
+                    
+                    <label for="industry">Industry:</label>
+                    <select id="industry" name="industry"></select>
                 </div>
-                <button type="submit" class="submit-btn">Extract Metric</button>
+                <button type="submit" class="submit-btn" id="collectPdfsBtn">Collect PDFs</button>
             </form>
         </div>
 
         <script>
-            const fileInput = document.getElementById('file-upload');
-            const fileContainer = document.querySelector('.file-input-container');
             const sectorIndustryMap = {{ sector_industry_map|safe}};
             const sectorSelect = document.getElementById('sector');
             const industrySelect = document.getElementById('industry');
@@ -93,26 +89,10 @@
             // Trigger once on load to set initial industries
             sectorSelect.dispatchEvent(new Event('change'));
 
-
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    fileContainer.style.borderColor = '#4CAF50';
-                }
-            });
-
-            fileContainer.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                fileContainer.style.borderColor = '#4CAF50';
-            });
-
-            fileContainer.addEventListener('dragleave', () => {
-                fileContainer.style.borderColor = '#ddd';
-            });
-
-            fileContainer.addEventListener('drop', (e) => {
-                e.preventDefault();
-                fileInput.files = e.dataTransfer.files;
-                fileContainer.style.borderColor = '#4CAF50';
+            document.getElementById('collectPdfsBtn').addEventListener('click', function() {
+            const form = document.getElementById('collectPdfsForm');
+            form.action = "{{ url_for('collected_pdfs') }}";
+            form.submit();
             });
         </script>
     </body>

@@ -77,30 +77,28 @@
     <body>
         <div class="container">
             <h1>Metric Extraction Results</h1>
-            
-            <div class="results-container">
+            {% for image, result, company, reporting_period in zip(images, results, companies, reporting_periods) %}
+            <div class="results-container" style="margin-bottom: 30px;">
                 <div class="image-container">
-                    <img src="data:image/png;base64,{{ img_base64 }}" id="result-image">
+                    <div><img src="data:image/png;base64,{{ image }}" id="result-image"></div>
                     <div class="zoom-controls">
                         <button class="zoom-btn" onclick="zoomIn()">+</button>
                         <button class="zoom-btn" onclick="zoomOut()">-</button>
                         <button class="zoom-btn" onclick="resetZoom()">Reset</button>
                     </div>
-                </div>
-                
-                <div class="metric-container">
-                    <h2>Extracted Metric</h2>
-                    <p><strong>Company:</strong> {{ company_name }}</p>
-                    <p><strong>Reporting Year:</strong> {{ reporting_year }}</p>
-                    
+                    <div class="metric-container">
+                        <h2>Extracted Metric</h2>
+                        <p><strong>Company:</strong> {{ company_name }}</p>
+                        <p><strong>Reporting Year:</strong> {{ reporting_year }}</p>
+                    </div>
                     <div class="metric-form">
                         <label for="metric_value">Extracted Value:</label>
-                        <input type="text" id="metric_value" value="{{ html_data }}" readonly>
+                        <input type="text" id="metric_value" value="{{ result }}" readonly>
                     </div>
-                    
-                    <a href="{{ url_for('initial') }}" class="new-document-btn">Process New Document</a>
                 </div>
             </div>
+            {% endfor %}        
+        <a href="{{ url_for('initial') }}" class="new-document-btn">New Industry Set</a>
         </div>
 
         <script>

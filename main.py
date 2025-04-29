@@ -522,7 +522,6 @@ for i in range(len(sectors_l)):
 
 #remove ./?
 UPLOAD_FOLDER = "/uploads/"
-ALLOWED_EXTENSIONS = {'pdf'}
 
 # Set the maximum allowed request size (in bytes)
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 10 MB, adjust as needed
@@ -533,8 +532,6 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 evaluator = evaluate_metric()
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Open a ngrok tunnel to the HTTP server
 # public_url = ngrok.connect(port).public_url
@@ -551,36 +548,52 @@ def allowed_file(filename):
 #     config.bind = ["127.0.0.1:8000"]  # Address and port to bind the server
 #     asyncio.run(serve(app, config))  # Use asyncio to start Hypercorn
 
-@app.route('/')
-async def initial():
-    return await render_template("file1.html", sector_industry_map=json.dumps(sector_industry_map))
+@app.route('/', methods=['POST'])
+async def initial():    
+    return await render_template("file3.html", sector_industry_map=json.dumps(sector_industry_map))
+
+@app.route('/collected_pdfs/')
+async def collected_pdfs():
+    form = await request.form
+    industry = form.get('industry')
+    filtered_df = sus_reports_df.loc[sus_reports_df['Industry'] == industry]
+    filtered_df = filtered_df[filtered_df["Reporting Period"]!="2021"].reset_index(drop = True)
+    urls = list(filtered_df["URL"].values)
+    ids = list(filtered_df["id"].values)
+    downloaded_files = []
+    for i in range(len(urls)):
+        try:
+            url = urls[i]
+            filename = str(ids[i])+'.pdf'
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
+            urllib.request.urlretrieve(url,filepath)
+            downloaded_files.append(filepath)
+        except:
+            pass
+    # check if downloaded_files is empty
+    if downloaded_files==[]:
+        return "No files uploaded", 400
+    return await render_template("file1.html", downloaded_files=downloaded_files)
 
 @app.route("/show_result/", methods=['POST'])
 async def show_result():
-    files = await request.files
-    uploaded_file = files['file-upload']
-    if 'file-upload' not in files:
-        return "No file part", 400
-    
-    file = files['file-upload']
-
-    if file.filename=='':
-        return "No selected file", 400
-    
-    if file and allowed_file(file.filename):
-        form = await request.form
-        company_name = form["company_name"]
-        reporting_period = form["reporting_year"]
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'],filename)
-        await file.save(filepath)
-        # html_data = await evaluator.get_metric(filepath,company_name,reporting_period)
+    files = os.listdir(app.config['UPLOAD_FOLDER'])
+    images = []
+    results = []
+    companies = []
+    reporting_periods = []
+    for file in files:
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'],file)
+        #look up id to get company name and reporting period
+        id = file.split('.')[0]
+        company_name = sus_reports_df.loc[sus_reports_df['id'] == id]['Company'].values[0]
+        reporting_period = sus_reports_df.loc[sus_reports_df['id'] == id]['Reporting Period'].values[0]
         [html_data,img_base64] = await evaluator.get_metric(filepath,company_name,reporting_period)
-        # return "Awaiting metric...", 202
-        return await render_template("file2.html", html_data=html_data,img_base64=img_base64)
-    
-    return "Invalid file type", 400
-
+        images.append(img_base64)
+        results.append(html_data)
+        companies.append(company_name)
+        reporting_periods.append(reporting_period)
+    return await render_template("file2.html", results=results,images=images,companies=companies,reporting_periods=reporting_periods)
 
 # if __name__ == '__main__':
 #     app.run()
