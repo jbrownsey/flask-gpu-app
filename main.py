@@ -548,11 +548,11 @@ evaluator = evaluate_metric()
 #     config.bind = ["127.0.0.1:8000"]  # Address and port to bind the server
 #     asyncio.run(serve(app, config))  # Use asyncio to start Hypercorn
 
-@app.route('/', methods=['POST'])
+@app.route('/')
 async def initial():    
     return await render_template("file3.html", sector_industry_map=json.dumps(sector_industry_map))
 
-@app.route('/collected_pdfs/')
+@app.route('/collected_pdfs/', methods=['POST'])
 async def collected_pdfs():
     form = await request.form
     industry = form.get('industry')
