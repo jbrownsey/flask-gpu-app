@@ -430,7 +430,9 @@ class evaluate_metric:
                     answer = value
                 else:
                     pass
-        if answer == []:
+        try:
+            answer = answer['messages'][0]
+        except:
             answer = "skip"
         return [answer,img_base64]
 
