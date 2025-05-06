@@ -205,7 +205,7 @@ class evaluate_metric:
         messages: Annotated[Sequence[BaseMessage], add_messages]
 
     ### Edges
-    def grade_documents(self,state) -> Literal["generate", "rewrite"]:
+    def grade_documents(self,state) -> Literal["generate", "rewrite", "end"]:
         """
         Determines whether the retrieved documents are relevant to the question.
 
@@ -263,7 +263,11 @@ class evaluate_metric:
         else:
             print("---DECISION: DOCS NOT RELEVANT---")
             print(score)
-            return "rewrite"
+            state['irrelevant_count'] += 1
+            if state['irrelevant_count'] >= 3:
+                return "end"
+            else:
+                return "rewrite"
     
     ### Nodes
     def agent(self,state):
@@ -355,13 +359,16 @@ class evaluate_metric:
         response = rag_chain.invoke({"context": docs, "question": question})
         return {"messages": [response]}
 
+    def end(self):
+        print("---END---")
+
     def define_graph(self,retriever_tool):
 
         class AgentState(TypedDict):
         # The add_messages function defines how an update should be processed
         # Default is to replace. add_messages says "append"
             messages: Annotated[Sequence[BaseMessage], add_messages]
-        
+            irrelevant_count: int #track number of times deemed irrelevant
         # Define a new graph
         workflow = StateGraph(AgentState)
         # Define the nodes we will cycle between
@@ -370,6 +377,7 @@ class evaluate_metric:
         workflow.add_node("retrieve", retrieve)  # retrieval
         workflow.add_node("rewrite", self.rewrite)  # Re-writing the question
         workflow.add_node("generate", self.generate)  # Generating a response after we know the documents are relevant
+        workflow.add_node("end", self.end)  # End
         # Call agent node to decide to retrieve or not
         workflow.add_edge(START, "agent")
         
@@ -393,6 +401,7 @@ class evaluate_metric:
         )
         workflow.add_edge("generate", END)
         workflow.add_edge("rewrite", "agent")
+        workflow.add_edge("end", END)
         
         # Compile
         graph = workflow.compile()
