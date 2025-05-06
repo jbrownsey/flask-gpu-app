@@ -107,7 +107,7 @@ class evaluate_metric:
             pdf_new = pdfium.PdfDocument.new()
             pdf_old = pdfium.PdfDocument(pdf)
             pdf_new.import_pages(pdf_old,pages)
-            extracted_filename = pdf[:-4]+' extracted.pdf'
+            extracted_filename = pdf[:-4]+'_extracted.pdf'
             pdf_new.save(extracted_filename)
             return [True,extracted_filename]
         else:
