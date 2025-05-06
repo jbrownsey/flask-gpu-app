@@ -418,7 +418,8 @@ class evaluate_metric:
                         Report the total water withdrawn by the company in {year}, if it is disclosed in the provided context. 
                         In your answer, print only the number (in metres cubed), and do not include units."""
                         ),
-            ]
+            ],
+            "irrelevant_count":0
         }
         return graph.stream(inputs)
 
