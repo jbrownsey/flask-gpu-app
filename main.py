@@ -116,18 +116,24 @@ class evaluate_metric:
 
     def get_page_as_png(self,extracted_file,year,j):
         text_query = "What is the total water withdrawn by the company in "+year+"?"
-        try:
-            RAG = RAGMultiModalModel.from_index(extracted_file[:-4])
-            results = RAG.search(text_query,k=3)
-        except:
-            index_dir = extracted_file[:-4]
-            if os.path.exists(index_dir):
+        index_dir = Path(extracted_file[:-4])
+        index_config_file = index_dir / "index_config.json.gz"
+        if index_config_file.exists():
+            print(f"[INFO] Index already exists at {index_dir}. Loading existing index.")
+            RAG = RAGMultiModalModel.from_index(index_dir)
+        else:
+            print(f"[INFO] No index found at {index_dir}. Creating a new index.")
+            if index_dir.exists():
+                print(f"[INFO] Removing stale index directory at {index_dir}.")
                 shutil.rmtree(index_dir)
             evaluate_metric.RAG.index(input_path=extracted_file,
                 index_name=extracted_file[:-4],
                 store_collection_with_index=False,
-                overwrite=True,)
-            results = evaluate_metric.RAG.search(text_query,k=3)
+            overwrite=True,)
+            print(f"[INFO] New index created at {index_dir}. Loading it now.")
+            RAG = RAGMultiModalModel.from_index(index_dir)
+        print(f"[INFO] Using index at {index_dir} for search.")
+        results = RAG.search(text_query,k=3)
         pages = convert_from_path(extracted_file)
         png_file = extracted_file[:-4]+' page.png'
         pages[results[j-1]['page_num']-1].save(png_file, 'PNG')
