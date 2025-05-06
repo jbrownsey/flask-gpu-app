@@ -21,6 +21,7 @@ import pypdfium2 as pdfium
 import urllib.request
 import pymupdf
 import os
+import shutil
 import shapely
 import operator
 from typing import Annotated, Sequence, TypedDict, Literal
@@ -119,6 +120,9 @@ class evaluate_metric:
             RAG = RAGMultiModalModel.from_index(extracted_file[:-4])
             results = RAG.search(text_query,k=3)
         except:
+            index_dir = extracted_file[:-4]
+            if os.path.exists(index_dir):
+                shutil.rmtree(index_dir)
             evaluate_metric.RAG.index(input_path=extracted_file,
                 index_name=extracted_file[:-4],
                 store_collection_with_index=False,
